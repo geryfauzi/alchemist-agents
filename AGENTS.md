@@ -1,50 +1,78 @@
 <!-- antislop:start -->
 
-## antislop
+## antislop (Visual & Content Polish Filter)
 
-For UI, copy, people, mobile layout, or code comments work, load the antislop skill for the task:
+Core filter yang aktif untuk UI, copy, aksesibilitas, layout mobile, dan kebersihan komentar kode:
 
-- Core filter, always on: `antislop`
+- Filter inti (selalu aktif): `antislop`
 - UI / visual: `antislop-ui`
-- Copy & text: `antislop-copywriting`
-- People: `antislop-human`
-- Mobile / responsive: `antislop-layoutmobile`
-- Code comments: `antislop-code`
-Before starting, ask the user when antislop applies: during the work, or after it is done.
+- Copywriting & teks pengguna: `antislop-copywriting`
+- Aksesibilitas & human-first: `antislop-human`
+- Layout mobile & responsif: `antislop-layoutmobile`
+- Higienitas komentar kode: `antislop-code`
+
 <!-- antislop:end -->
 
 <!-- ponytail:start -->
 
-## ponytail
+## ponytail (Minimalist Engineering & YAGNI)
 
-For any coding task, refactoring, code review, or dependency selection:
+Berlaku untuk semua penulisan kode, refactoring, code review, dan pemilihan dependensi:
 
 - Core skill: `ponytail`
 - Review over-engineering: `ponytail-review`
-- Default level: full (Ladder: YAGNI -> stdlib -> native platform features -> minimum code)
-- Deactivate when user says "stop ponytail" or "normal mode".
+- Audit kode & bloat: `ponytail-audit`
+- Debt tracker: `ponytail-debt`
+- Level default: `full` (Ladder: YAGNI -> Standard Library -> Fitur Native Platform/Framework -> Minimum Code)
+- Hindari menambah dependensi eksternal jika bahasa/framework bawaan sudah menyediakannya.
+
 <!-- ponytail:end -->
 
 <!-- superpowers:start -->
 
-## superpowers
+## superpowers (Engineering Workflow Rigor)
 
-Follow the structured engineering workflows from superpowers:
+Disiplin alur kerja engineering terstruktur:
 
-- Planning: `writing-plans`
-- Execution: `executing-plans`
-- TDD: `test-driven-development`
-- Debugging: `systematic-debugging`
+- Perencanaan: `writing-plans`, `brainstorming`
+- Eksekusi terarah: `executing-plans`, `subagent-driven-development`
+- Pengujian: `test-driven-development`
+- Investigasi bug: `systematic-debugging`
+- Verifikasi akhir: `verification-before-completion`
+
 <!-- superpowers:end -->
 
-## Aturan umum
+---
 
-Bagian ini untuk hal yang berlaku di semua project. Tim bebas mengeditnya. Aturan teknis (UI, desain, aksesibilitas, anti-slop) diurus oleh skill `antislop`, jadi tidak perlu diulang di sini.
+## The Alchemist Lifecycle (The Unity Standard)
+
+Ketika mengerjakan tugas di project apa pun, jalankan pipeline terintegrasi berikut:
+
+1. **Fase Perencanaan (Superpowers + Ponytail)**:
+   - Gunakan `writing-plans` untuk tugas multi-langkah.
+   - Filter setiap rencana dengan prinsip Ponytail: terapkan YAGNI, tolak abstraksi prematur, dan jangan rencanakan package baru jika stdlib/native mencukupi.
+
+2. **Fase Implementasi (Superpowers + Ponytail)**:
+   - Terapkan `test-driven-development` atau eksekusi langkah per langkah (`executing-plans`).
+   - Tulis kode sesedikit mungkin yang memenuhi tes dan kebutuhan saat ini.
+
+3. **Fase Polish & Estetika (Antislop)**:
+   - Frontend/UI: Pastikan kontras warna, tap target, responsivitas mobile, dan hindari template generik AI (`antislop-ui`, `antislop-human`, `antislop-layoutmobile`).
+   - Copy: Tulis teks tombol, pesan error, dan judul yang natural bagi manusia (`antislop-copywriting`).
+   - Kode: Bersihkan komentar basa-basi dan biarkan kode berbicara sendiri (`antislop-code`).
+
+4. **Fase Verifikasi & Review (Superpowers + Ponytail)**:
+   - Sebelum selesai, jalankan build, test, lint, dan typecheck (`verification-before-completion`).
+   - Lakukan self-review terhadap kompleksitas kode yang baru dibuat (`ponytail-review`).
+
+---
+
+## Aturan Umum
 
 - Balas dalam bahasa yang dipakai penanya. Kode, perintah, dan nama file tetap dalam bahasa aslinya.
 - Sebelum mengklaim pekerjaan selesai, jalankan build, test, typecheck, dan lint yang tersedia di project. Kalau perintahnya tidak diketahui, tanyakan dulu, jangan menebak.
 - Jangan commit, push, atau buat PR tanpa instruksi eksplisit.
-- Jangan menambahkan komentar ke kode kecuali diminta.
+- Jangan menambahkan komentar ke kode kecuali diminta (`antislop-code`).
 - Cari pola yang sudah ada di codebase sebelum menulis yang baru, lalu ikuti konvensi setempat.
 - Sebut lokasi kode dengan format `file:line` supaya mudah dibuka.
 - Untuk tugas dengan 3 langkah atau lebih, atau yang menyentuh banyak file, pakai daftar tugas dan perbarui statusnya saat jalan.

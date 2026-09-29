@@ -1,38 +1,73 @@
-# agents-standard
+# alchemist-agents
 
-Standar agent untuk dipakai di semua project yang dikerjakan dengan OpenCode. Satu repo sebagai sumber kebenaran, didaftarkan sekali di config global, lalu berlaku di semua project tanpa perlu disalin ke masing-masing folder.
+Standar scaffolding dan instruksi AI coding agent terpadu (*The Alchemist Standard*) untuk seluruh project di perusahaan. Mengintegrasikan tiga pilar utama:
 
-## Isi repo
+1. **Superpowers**: Disiplin alur kerja engineering terstruktur (Planning → Execution → TDD → Systematic Debugging → Verification).
+2. **Ponytail**: Filosofi kesederhanaan kode & YAGNI (mengutamakan standard library & fitur native, anti over-engineering, minim dependensi).
+3. **Antislop**: Filter estetika, UX ramah manusia, responsivitas mobile, dan higienitas komentar kode bebas template generik AI.
 
-- `AGENTS.md` — instruksi global. Berisi pointer ke tiga keluarga skill (antislop, ponytail, superpowers) dan aturan umum tim. File inilah yang dimuat opencode setiap kali session dimulai.
-- `skills/` — 27 skill. Setiap skill di foldernya sendiri dengan file `SKILL.md` di dalamnya.
-- `templates/AGENTS.project.md` — template untuk `AGENTS.md` level project. Isinya hal-hal spesifik project, seperti perintah build dan konvensi penamaan.
+Satu repo ini menjadi sumber kebenaran tunggal (*single source of truth*), dapat dipasang via NPM/NPX, dan otomatis berlaku di semua project.
 
-## Cara pasang
+---
 
-1. Clone repo ini ke mana saja di mesin Anda.
-2. Buka config global opencode di `~/.config/opencode/opencode.json`. Di Windows, path-nya `C:/Users/<user>/.config/opencode/opencode.json`. Kalau belum ada, buat filenya.
-3. Tambahkan dua kunci ini lalu simpan. Ganti `<path>` dengan lokasi hasil clone Anda.
+## Cara Pasang Cepat (Quickstart via NPX)
 
-   ```json
-   {
-     "instructions": ["<path>/AGENTS.md"],
-     "skills": { "paths": ["<path>/skills"] }
-   }
-   ```
+Anda dapat langsung mengonfigurasi agent di komputer Anda tanpa perlu mengedit file JSON secara manual:
 
-   Kalau di file config Anda sudah ada kunci lain, tambahkan saja dua kunci ini. Jangan hapus yang sudah ada.
+```bash
+npx alchemist-agents
+```
+*Script interaktif akan menampilkan pilihan AI agent yang ingin dikonfigurasikan.*
 
-4. Keluar dari opencode lalu jalankan lagi. Config opencode hanya dibaca sekali saat aplikasi start, jadi perubahan baru aktif setelah restart.
-5. Cek hasilnya. Jalankan opencode di folder mana pun, lalu lihat apakah daftar skill muncul.
+Atau gunakan flag langsung:
+```bash
+npx alchemist-agents --antigravity  # Khusus Google Antigravity
+npx alchemist-agents --opencode     # Khusus OpenCode
+npx alchemist-agents --claude       # Khusus Claude Code
+npx alchemist-agents --all          # Konfigurasi semua agent
+npx alchemist-agents --gemini       # Export prompt untuk Gemini Web Chat
+```
 
-## Cara pakai di project baru
+---
 
-Salin `templates/AGENTS.project.md` ke root project sebagai `AGENTS.md`, lalu isi bagian yang masih kosong. Standar global tetap berlaku. Kalau ada aturan yang bentrok, `AGENTS.md` di dalam project yang menang.
+## Panduan Lengkap untuk Setiap AI Agent
 
-## Cara update
+Kami menyediakan panduan detail langkah demi langkah untuk setiap platform:
 
-1. Ubah file di repo ini, commit, lalu push.
-2. Anggota tim lain menjalankan `git pull`.
-3. Restart opencode supaya perubahan terbaca.
-4. Tidak ada berkas yang perlu disalin ulang ke project lain. Semua project langsung memakai versi terbaru.
+- 📖 **[Panduan Setup Berbagai AI Agent](docs/AGENTS_SETUP.md)**:
+  - Antigravity (Google AGY)
+  - OpenCode
+  - Claude Code
+  - Cursor & Windsurf
+  - GitHub Copilot
+- 🌐 **[Panduan Integrasi Gemini Web Chat](docs/GEMINI_WEB.md)**: Cara memasang standar ini ke fitur **Gemini Gems** di `gemini.google.com`.
+
+---
+
+## Isi Repositori
+
+- **`AGENTS.md`**: Instruksi global terpadu (*The Alchemist Lifecycle*, standar stack React/Next.js, Laravel, Go, dan aturan umum).
+- **`skills/`**: 27 skill pendukung dari keluarga superpowers, ponytail, dan antislop.
+- **`bin/cli.js`**: Script CLI otomatis berbasis Node.js standard library (zero-dependencies).
+- **`docs/`**: Dokumentasi setup untuk berbagai platform AI.
+
+---
+
+## Cara Publish (Untuk Maintainer)
+
+### 1. Push ke GitHub
+```bash
+git add .
+git commit -m "feat: initial release of alchemist-agents"
+git remote add origin https://github.com/<username>/alchemist-agents.git
+git branch -M main
+git push -u origin main
+```
+
+### 2. Publish ke NPM Registry
+Pastikan Anda sudah login ke akun NPM di terminal:
+```bash
+npm login
+npm publish --access public
+```
+Setelah dipublish, siapa pun dapat langsung menjalankan `npx alchemist-agents` di terminal mereka.

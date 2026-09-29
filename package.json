@@ -1,0 +1,31 @@
+{
+  "name": "alchemist-agents",
+  "version": "1.0.0",
+  "description": "The Alchemist Standard: Unified AI coding agent workflows & skills (Antislop + Ponytail + Superpowers)",
+  "main": "bin/cli.js",
+  "bin": {
+    "alchemist-agents": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "skills",
+    "docs",
+    "AGENTS.md",
+    "README.md"
+  ],
+  "keywords": [
+    "ai-agent",
+    "antigravity",
+    "opencode",
+    "claude-code",
+    "cursor",
+    "antislop",
+    "ponytail",
+    "superpowers",
+    "agent-skills",
+    "gemini",
+    "alchemist"
+  ],
+  "author": "",
+  "license": "MIT"
+}
