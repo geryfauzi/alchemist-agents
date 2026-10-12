@@ -4,7 +4,7 @@
   "description": "The Alchemist Standard: Unified AI coding agent workflows & skills (Antislop + Ponytail + Superpowers)",
   "main": "bin/cli.js",
   "bin": {
-    "alchemist-agents": "./bin/cli.js"
+    "alchemist-agents": "bin/cli.js"
   },
   "files": [
     "bin",
