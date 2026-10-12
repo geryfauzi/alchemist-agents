@@ -1,6 +1,6 @@
 {
   "name": "alchemist-agents",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "The Alchemist Standard: Unified AI coding agent workflows & skills (Antislop + Ponytail + Superpowers)",
   "main": "bin/cli.js",
   "bin": {
@@ -13,6 +13,14 @@
     "AGENTS.md",
     "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geryfauzi/alchemist-agents.git"
+  },
+  "bugs": {
+    "url": "https://github.com/geryfauzi/alchemist-agents/issues"
+  },
+  "homepage": "https://github.com/geryfauzi/alchemist-agents#readme",
   "keywords": [
     "ai-agent",
     "antigravity",
@@ -26,6 +34,6 @@
     "gemini",
     "alchemist"
   ],
-  "author": "",
+  "author": "Gery Akbar Fauzi",
   "license": "MIT"
 }

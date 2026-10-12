@@ -1,6 +1,6 @@
 # Panduan Setup Lengkap untuk Berbagai AI Coding Agent
 
-Standar ini dirancang agar dapat digunakan di berbagai AI coding agent terpopuler. Anda bisa menggunakan tool CLI otomatis (`npx alchemist-agents`) atau melakukan konfigurasi manual seperti dijelaskan di bawah ini.
+Standar ini dirancang agar dapat digunakan di berbagai AI coding agent terpopuler. Anda bisa menggunakan tool CLI otomatis (`npx alchemist-agents@latest`) atau melakukan konfigurasi manual seperti dijelaskan di bawah ini.
 
 ---
 
@@ -10,20 +10,20 @@ Antigravity memiliki sistem pemuatan skill secara progresif dan hierarkis.
 
 ### Cara Otomatis:
 ```bash
-npx alchemist-agents --antigravity
+npx alchemist-agents@latest --antigravity
 ```
 
 ### Cara Manual:
 1. Buka atau buat file `~/.gemini/config/skills.json` (Windows: `%USERPROFILE%\.gemini\config\skills.json`).
-2. Daftarkan path folder `skills` repo ini:
+2. Daftarkan path folder `skills` Alchemist yang ada di komputer Anda:
    ```json
    {
      "entries": [
-       { "path": "C:/laragon/www/alchemist-agents/skills" }
+       { "path": "~/.alchemist-agents/skills" }
      ]
    }
    ```
-3. Salin [AGENTS.md](file:///c:/laragon/www/agents-standard/AGENTS.md) ke `~/.gemini/config/AGENTS.md` agar berlaku sebagai aturan global di semua project.
+3. Salin file `AGENTS.md` ke `~/.gemini/config/AGENTS.md` agar berlaku sebagai aturan global di semua project.
 
 ---
 
@@ -33,7 +33,7 @@ OpenCode memuat instruksi dan folder skill melalui file konfigurasi global `open
 
 ### Cara Otomatis:
 ```bash
-npx alchemist-agents --opencode
+npx alchemist-agents@latest --opencode
 ```
 
 ### Cara Manual:
@@ -41,9 +41,9 @@ npx alchemist-agents --opencode
 2. Tambahkan baris konfigurasi berikut:
    ```json
    {
-     "instructions": ["C:/laragon/www/alchemist-agents/AGENTS.md"],
+     "instructions": ["~/.alchemist-agents/AGENTS.md"],
      "skills": {
-       "paths": ["C:/laragon/www/alchemist-agents/skills"]
+       "paths": ["~/.alchemist-agents/skills"]
      }
    }
    ```
@@ -57,33 +57,29 @@ Claude Code membaca file instruksi markdown bernama `CLAUDE.md`.
 
 ### Cara Otomatis:
 ```bash
-npx alchemist-agents --claude
+npx alchemist-agents@latest --claude
 ```
 
 ### Cara Manual:
 - **Global**: Salin file `AGENTS.md` ke folder global Claude Code di `~/.claude/CLAUDE.md`.
-- **Per Project**: Salin file `AGENTS.md` ke root project Anda dan ubah namanya menjadi `CLAUDE.md`.
+- **Per Project**: Salin file `AGENTS.md` ke root project Anda dan beri nama `CLAUDE.md`.
 
 ---
 
-## 4. Cursor / Windsurf
+## 4. Cursor / Windsurf / Copilot / Cline (Per Project)
 
-Cursor dan Windsurf membaca instruksi dari file `.cursorrules` atau `.windsurfrules` di root repository.
-
-### Cara Manual:
-1. Jalankan perintah di root project Anda:
-   ```bash
-   npx alchemist-agents --workspace
-   ```
-2. Atau salin isi [AGENTS.md](file:///c:/laragon/www/agents-standard/AGENTS.md) ke dalam file `.cursorrules` (untuk Cursor) atau `.windsurfrules` (untuk Windsurf).
-
----
-
-## 5. GitHub Copilot & Codex
-
-GitHub Copilot Workspace dan extension Copilot di VS Code membaca file instruksi repositori di `.github/copilot-instructions.md`.
+### Cara Otomatis:
+Di root direktori project Anda, cukup jalankan:
+```bash
+npx alchemist-agents@latest --workspace
+```
+Perintah ini akan secara otomatis membuat seluruh file konfigurasi berikut:
+- `AGENTS.md` (Antigravity & OpenCode)
+- `CLAUDE.md` (Claude Code)
+- `.cursorrules` (Cursor IDE)
+- `.windsurfrules` (Windsurf IDE)
+- `.github/copilot-instructions.md` (GitHub Copilot)
+- `.clinerules` (Cline & Roo Code)
 
 ### Cara Manual:
-1. Buat folder `.github/` di root project.
-2. Salin isi [AGENTS.md](file:///c:/laragon/www/agents-standard/AGENTS.md) ke `.github/copilot-instructions.md`.
-3. Commit file tersebut ke repository agar seluruh tim yang menggunakan Copilot otomatis mengikuti standar ini.
+Salin isi `AGENTS.md` ke dalam masing-masing file konfigurasi editor yang Anda gunakan di root project.

@@ -2,8 +2,8 @@
 
 /**
  * Alchemist Agents CLI (alchemist-agents)
- * The Alchemist Standard: Automatic setup tool for AI coding agents
- * (Antigravity, OpenCode, Claude Code, Cursor, Windsurf, etc.)
+ * The Alchemist Standard: Automatic setup & sync tool for AI coding agents
+ * Supports: Antigravity (Google AGY), OpenCode, Claude Code, Cursor, Windsurf, GitHub Copilot, Cline/Roo Code
  */
 
 const fs = require('fs');
@@ -16,6 +16,19 @@ const SKILLS_DIR = path.join(ROOT_DIR, 'skills');
 const AGENTS_MD_PATH = path.join(ROOT_DIR, 'AGENTS.md');
 const HOME_DIR = os.homedir();
 
+// Global permanent storage for Alchemist
+const ALCHEMIST_GLOBAL_DIR = path.join(HOME_DIR, '.alchemist-agents');
+const ALCHEMIST_GLOBAL_SKILLS = path.join(ALCHEMIST_GLOBAL_DIR, 'skills');
+const ALCHEMIST_GLOBAL_AGENTS_MD = path.join(ALCHEMIST_GLOBAL_DIR, 'AGENTS.md');
+
+let PKG_VERSION = '2.0.0';
+try {
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8'));
+  PKG_VERSION = pkg.version || PKG_VERSION;
+} catch (e) {
+  // ignore
+}
+
 // Helpers
 function normalizePath(p) {
   return p.replace(/\\/g, '/');
@@ -27,9 +40,75 @@ function ensureDirSync(dirPath) {
   }
 }
 
-// 1. Setup Antigravity
+// Recursive directory copy with fallback
+function copyDirSync(src, dest) {
+  ensureDirSync(dest);
+  if (typeof fs.cpSync === 'function') {
+    fs.cpSync(src, dest, { recursive: true, force: true });
+  } else {
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+    for (const entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+      if (entry.isDirectory()) {
+        copyDirSync(srcPath, destPath);
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
+  }
+}
+
+// Ensure execution permissions on Unix-like systems
+function ensureUnixPermissions(dirPath) {
+  if (process.platform === 'win32') return;
+
+  function walk(current) {
+    if (!fs.existsSync(current)) return;
+    const entries = fs.readdirSync(current, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (
+        entry.name.endsWith('.sh') ||
+        entry.name.endsWith('.bash') ||
+        entry.name === 'task-start' ||
+        entry.name === 'task-done' ||
+        entry.name === 'review-package' ||
+        entry.name === 'sdd-workspace' ||
+        entry.name === 'task-brief'
+      ) {
+        try {
+          fs.chmodSync(full, 0o755);
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+  }
+
+  try {
+    walk(dirPath);
+  } catch (e) {
+    // ignore
+  }
+}
+
+// Sync Alchemist skills & AGENTS.md to permanent location (~/.alchemist-agents)
+function syncGlobalAlchemistFiles() {
+  ensureDirSync(ALCHEMIST_GLOBAL_DIR);
+  copyDirSync(SKILLS_DIR, ALCHEMIST_GLOBAL_SKILLS);
+  ensureUnixPermissions(ALCHEMIST_GLOBAL_SKILLS);
+  fs.copyFileSync(AGENTS_MD_PATH, ALCHEMIST_GLOBAL_AGENTS_MD);
+  console.log(`[✓] Asset Alchemist tersinkronisasi di: ${ALCHEMIST_GLOBAL_DIR}`);
+}
+
+// 1. Setup Antigravity (Google AGY)
 function setupAntigravity() {
   console.log('\n--- Konfigurasi Antigravity (Google AGY) ---');
+  syncGlobalAlchemistFiles();
+
   const geminiConfigDir = path.join(HOME_DIR, '.gemini', 'config');
   ensureDirSync(geminiConfigDir);
 
@@ -45,18 +124,19 @@ function setupAntigravity() {
     }
   }
 
-  const normalizedSkillsPath = normalizePath(SKILLS_DIR);
-  const alreadyExists = config.entries.some(
-    (entry) => typeof entry === 'object' && normalizePath(entry.path || '') === normalizedSkillsPath
-  );
+  const targetPath = normalizePath(ALCHEMIST_GLOBAL_SKILLS);
 
-  if (!alreadyExists) {
-    config.entries.push({ path: normalizedSkillsPath });
-    fs.writeFileSync(skillsJsonPath, JSON.stringify(config, null, 2), 'utf8');
-    console.log(`[✓] Berhasil mendaftarkan folder skills di: ${skillsJsonPath}`);
-  } else {
-    console.log(`[i] Path skills sudah terdaftar sebelumnya di: ${skillsJsonPath}`);
-  }
+  // Bersihkan path lama alchemist-agents (agar tidak menumpuk/broken dari versi lama)
+  config.entries = config.entries.filter((entry) => {
+    const rawPath = typeof entry === 'string' ? entry : (entry && entry.path) || '';
+    const norm = normalizePath(rawPath);
+    return !norm.includes('alchemist-agents/skills');
+  });
+
+  // Masukkan path permanen
+  config.entries.push({ path: targetPath });
+  fs.writeFileSync(skillsJsonPath, JSON.stringify(config, null, 2), 'utf8');
+  console.log(`[✓] Berhasil mendaftarkan skills di: ${skillsJsonPath}`);
 
   // Global AGENTS.md for Antigravity
   const globalAgentsMd = path.join(geminiConfigDir, 'AGENTS.md');
@@ -67,6 +147,8 @@ function setupAntigravity() {
 // 2. Setup OpenCode
 function setupOpenCode() {
   console.log('\n--- Konfigurasi OpenCode ---');
+  syncGlobalAlchemistFiles();
+
   const opencodeConfigDir = path.join(HOME_DIR, '.config', 'opencode');
   ensureDirSync(opencodeConfigDir);
 
@@ -81,19 +163,18 @@ function setupOpenCode() {
     }
   }
 
-  const normalizedAgentsMd = normalizePath(AGENTS_MD_PATH);
-  const normalizedSkillsPath = normalizePath(SKILLS_DIR);
+  const targetAgentsMd = normalizePath(ALCHEMIST_GLOBAL_AGENTS_MD);
+  const targetSkillsPath = normalizePath(ALCHEMIST_GLOBAL_SKILLS);
 
+  // Bersihkan path lama
   if (!Array.isArray(config.instructions)) config.instructions = [];
-  if (!config.instructions.includes(normalizedAgentsMd)) {
-    config.instructions.push(normalizedAgentsMd);
-  }
+  config.instructions = config.instructions.filter((p) => !normalizePath(p).includes('alchemist-agents'));
+  config.instructions.push(targetAgentsMd);
 
   if (!config.skills) config.skills = {};
   if (!Array.isArray(config.skills.paths)) config.skills.paths = [];
-  if (!config.skills.paths.includes(normalizedSkillsPath)) {
-    config.skills.paths.push(normalizedSkillsPath);
-  }
+  config.skills.paths = config.skills.paths.filter((p) => !normalizePath(p).includes('alchemist-agents/skills'));
+  config.skills.paths.push(targetSkillsPath);
 
   fs.writeFileSync(opencodeJsonPath, JSON.stringify(config, null, 2), 'utf8');
   console.log(`[✓] Berhasil memperbarui konfigurasi OpenCode di: ${opencodeJsonPath}`);
@@ -102,6 +183,8 @@ function setupOpenCode() {
 // 3. Setup Claude Code
 function setupClaudeCode() {
   console.log('\n--- Konfigurasi Claude Code ---');
+  syncGlobalAlchemistFiles();
+
   const claudeDir = path.join(HOME_DIR, '.claude');
   ensureDirSync(claudeDir);
 
@@ -110,18 +193,43 @@ function setupClaudeCode() {
   console.log(`[✓] Berhasil menyalin aturan Alchemist ke konfigurasi global Claude Code: ${claudeMdPath}`);
 }
 
-// 4. Setup Project Workspace (Current Working Directory)
+// 4. Setup Project Workspace (Multi-Agent Support)
 function setupProjectWorkspace() {
-  console.log('\n--- Konfigurasi Project Workspace Lokal ---');
+  console.log('\n--- Konfigurasi Workspace Project Lokal ---');
   const cwd = process.cwd();
+  const agentsContent = fs.readFileSync(AGENTS_MD_PATH, 'utf8');
+
+  // 1. AGENTS.md (Universal standard, Antigravity, OpenCode)
   const targetAgentsMd = path.join(cwd, 'AGENTS.md');
+  fs.writeFileSync(targetAgentsMd, agentsContent, 'utf8');
+  console.log(`[✓] AGENTS.md dibuat di root project`);
+
+  // 2. CLAUDE.md (Claude Code)
   const targetClaudeMd = path.join(cwd, 'CLAUDE.md');
+  fs.writeFileSync(targetClaudeMd, agentsContent, 'utf8');
+  console.log(`[✓] CLAUDE.md dibuat untuk Claude Code`);
 
-  fs.copyFileSync(AGENTS_MD_PATH, targetAgentsMd);
-  console.log(`[✓] Berhasil membuat AGENTS.md di root project: ${targetAgentsMd}`);
+  // 3. .cursorrules (Cursor IDE)
+  const targetCursor = path.join(cwd, '.cursorrules');
+  fs.writeFileSync(targetCursor, agentsContent, 'utf8');
+  console.log(`[✓] .cursorrules dibuat untuk Cursor IDE`);
 
-  fs.copyFileSync(AGENTS_MD_PATH, targetClaudeMd);
-  console.log(`[✓] Berhasil membuat CLAUDE.md di root project: ${targetClaudeMd}`);
+  // 4. .windsurfrules (Windsurf IDE)
+  const targetWindsurf = path.join(cwd, '.windsurfrules');
+  fs.writeFileSync(targetWindsurf, agentsContent, 'utf8');
+  console.log(`[✓] .windsurfrules dibuat untuk Windsurf IDE`);
+
+  // 5. GitHub Copilot (.github/copilot-instructions.md)
+  const githubDir = path.join(cwd, '.github');
+  ensureDirSync(githubDir);
+  const targetCopilot = path.join(githubDir, 'copilot-instructions.md');
+  fs.writeFileSync(targetCopilot, agentsContent, 'utf8');
+  console.log(`[✓] .github/copilot-instructions.md dibuat untuk GitHub Copilot`);
+
+  // 6. .clinerules (Cline / Roo Code)
+  const targetCline = path.join(cwd, '.clinerules');
+  fs.writeFileSync(targetCline, agentsContent, 'utf8');
+  console.log(`[✓] .clinerules dibuat untuk Cline / Roo Code`);
 }
 
 // 5. Export Gemini Web Chat Instructions
@@ -149,18 +257,25 @@ ${content}
 // Show Help
 function showHelp() {
   console.log(`
-Alchemist Agents CLI (alchemist-agents)
+Alchemist Agents CLI v${PKG_VERSION}
+The Alchemist Standard: Unified AI Coding Agent Setup Tool
 
 Penggunaan:
   npx alchemist-agents [perintah / opsi]
 
-Opsi:
+Opsi Global:
   --antigravity   Pasang konfigurasi global untuk Antigravity (Google AGY)
   --opencode      Pasang konfigurasi global untuk OpenCode
   --claude        Pasang konfigurasi global untuk Claude Code
-  --workspace     Salin file instruksi (AGENTS.md & CLAUDE.md) ke direktori saat ini
+  --all           Pasang untuk semua agent global sekaligus
+  --sync          Hanya sinkronkan folder skills ke ~/.alchemist-agents
+
+Opsi Project Lokal:
+  --workspace     Pasang aturan ke project saat ini (AGENTS.md, CLAUDE.md, Cursor, Windsurf, Copilot, Cline)
   --gemini        Export instruksi siap pakai untuk Gemini Web Chat (Gems)
-  --all           Pasang untuk semua agent yang didukung
+
+Lainnya:
+  --version, -v   Tampilkan versi alchemist-agents
   --help, -h      Tampilkan panduan ini
 
 Jika dijalankan tanpa opsi, menu interaktif akan ditampilkan.
@@ -175,15 +290,15 @@ function runInteractive() {
   });
 
   console.log('\n======================================================');
-  console.log('       Alchemist Agents: AI Coding Setup Tool         ');
+  console.log(`    Alchemist Agents v${PKG_VERSION}: AI Coding Setup Tool    `);
   console.log('======================================================');
-  console.log('Pilih AI Agent yang ingin Anda konfigurasikan:');
-  console.log('  1. Antigravity (Google AGY)');
-  console.log('  2. OpenCode');
-  console.log('  3. Claude Code');
-  console.log('  4. Workspace Project Saat Ini (AGENTS.md & CLAUDE.md)');
+  console.log('Pilih aksi konfigurasi yang ingin Anda jalankan:');
+  console.log('  1. Antigravity (Google AGY) - Global');
+  console.log('  2. OpenCode - Global');
+  console.log('  3. Claude Code - Global');
+  console.log('  4. Workspace Project Saat Ini (AGENTS.md, Cursor, Windsurf, Copilot, Cline, Claude)');
   console.log('  5. Export Instruksi untuk Gemini Web Chat (Gems)');
-  console.log('  6. Konfigurasi Semua AI Agent Sekaligus');
+  console.log('  6. Konfigurasi Semua AI Agent Sekaligus (Global)');
   console.log('  0. Keluar');
 
   rl.question('\nMasukkan pilihan [1-6, 0]: ', (answer) => {
@@ -226,6 +341,10 @@ if (args.length === 0) {
   runInteractive();
 } else if (args.includes('--help') || args.includes('-h')) {
   showHelp();
+} else if (args.includes('--version') || args.includes('-v')) {
+  console.log(`alchemist-agents v${PKG_VERSION}`);
+} else if (args.includes('--sync')) {
+  syncGlobalAlchemistFiles();
 } else if (args.includes('--antigravity')) {
   setupAntigravity();
 } else if (args.includes('--opencode')) {

@@ -48,8 +48,15 @@ Disiplin alur kerja engineering terstruktur:
 
 Ketika mengerjakan tugas di project apa pun, jalankan pipeline terintegrasi berikut:
 
+### 1. Skala Usaha Proporsional (Proportional Rigor)
+- **Tugas Trivial / Quick Fix** (1–2 file, typo, penyesuaian style kecil, bug sepele):
+  Terapkan Ponytail langsung (jalur tercepat, kode paling minimal), perbaiki, dan langsung verifikasi tanpa perlu overhead pembuatan dokumen plan panjang.
+- **Tugas Non-Trivial** (fitur baru, refaktor besar, bug kompleks, perombakan arsitektur, >= 3 langkah):
+  Wajib jalankan 4 fase Alchemist Lifecycle di bawah secara penuh.
+
+### 2. Fase Siklus Utama
 1. **Fase Perencanaan (Superpowers + Ponytail)**:
-   - Gunakan `writing-plans` untuk tugas multi-langkah.
+   - Gunakan `brainstorming` untuk eksplorasi dan `writing-plans` untuk tugas multi-langkah.
    - Filter setiap rencana dengan prinsip Ponytail: terapkan YAGNI, tolak abstraksi prematur, dan jangan rencanakan package baru jika stdlib/native mencukupi.
 
 2. **Fase Implementasi (Superpowers + Ponytail)**:
@@ -57,9 +64,9 @@ Ketika mengerjakan tugas di project apa pun, jalankan pipeline terintegrasi beri
    - Tulis kode sesedikit mungkin yang memenuhi tes dan kebutuhan saat ini.
 
 3. **Fase Polish & Estetika (Antislop)**:
-   - Frontend/UI: Pastikan kontras warna, tap target, responsivitas mobile, dan hindari template generik AI (`antislop-ui`, `antislop-human`, `antislop-layoutmobile`).
-   - Copy: Tulis teks tombol, pesan error, dan judul yang natural bagi manusia (`antislop-copywriting`).
-   - Kode: Bersihkan komentar basa-basi dan biarkan kode berbicara sendiri (`antislop-code`).
+   - **Frontend / UI**: Pastikan kontras warna, tap target, responsivitas mobile, dan hindari template generik AI (`antislop-ui`, `antislop-human`, `antislop-layoutmobile`).
+   - **Copywriting**: Tulis teks tombol, pesan error, dan judul yang natural bagi manusia (`antislop-copywriting`).
+   - **Kebersihan Kode**: Hapus komentar basa-basi AI. Pertahankan hanya komentar esensial (alasan bisnis, rumus non-obvious, peringatan edge-case) (`antislop-code`).
 
 4. **Fase Verifikasi & Review (Superpowers + Ponytail)**:
    - Sebelum selesai, jalankan build, test, lint, dan typecheck (`verification-before-completion`).
@@ -74,6 +81,7 @@ Ketika mengerjakan tugas di project apa pun, jalankan pipeline terintegrasi beri
 - Jangan commit, push, atau buat PR tanpa instruksi eksplisit.
 - Jangan menambahkan komentar ke kode kecuali diminta (`antislop-code`).
 - Cari pola yang sudah ada di codebase sebelum menulis yang baru, lalu ikuti konvensi setempat.
+- Kode dan script yang dibuat harus ramah lintas sistem operasi (Windows, Linux, macOS).
 - Sebut lokasi kode dengan format `file:line` supaya mudah dibuka.
 - Untuk tugas dengan 3 langkah atau lebih, atau yang menyentuh banyak file, pakai daftar tugas dan perbarui statusnya saat jalan.
 - Jangan mengarang URL. Pakai URL yang diberikan pengguna atau yang memang dibutuhkan untuk pemrograman.

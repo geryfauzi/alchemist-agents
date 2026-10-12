@@ -3,6 +3,7 @@ name: antislop-copywriting
 description: "Copy and text skill for antislop. Use when writing or editing prose: headlines, tone, CTAs, and anti-AI-writing patterns. Load with the core."
 allowed-tools: Read Write Edit Glob Grep
 ---
+
 # antislop-copywriting
 
 > Anti Slop: Rules for AI Coding Agents. Copy & Text skill
@@ -22,7 +23,7 @@ allowed-tools: Read Write Edit Glob Grep
 
 ### Empty AI Vocabulary
 
-- **The pattern:** verbs and abstract nouns stacked to sound impressive without saying anything: *unlock, elevate, empower, delve, showcase, testament, landscape (abstract), journey, robust, game-changer, next-level, seamless, cutting-edge, revolutionary*.
+- **The pattern:** verbs and abstract nouns stacked to sound impressive without saying anything: _unlock, elevate, empower, delve, showcase, testament, landscape (abstract), journey, robust, game-changer, next-level, seamless, cutting-edge, revolutionary_.
 - **Why it reads as AI:** these words appear far more often in machine-written text. They signal intent to impress, not intent to inform, and they are the fastest way to mark a page as AI-generated.
 - **Before:**
   > Unlock the power of seamless collaboration to elevate your team's journey to the next level.
@@ -231,9 +232,9 @@ allowed-tools: Read Write Edit Glob Grep
 
 ### Em Dashes
 
-- **The pattern:** the em dash character (`—`) used as an aside or connector: *"institutions — not the people — continue"*.
+- **The pattern:** the em dash character (`—`) used as an aside or connector: _"institutions — not the people — continue"_.
 - **Why it reads as AI:** it is one of the most reliable AI tells, and the core bans it outright.
-- **Rule:** R-02 forbids the em dash in any text. Replace each one, in rough order of preference: a period (start a new sentence), a comma (a tight aside), a colon (introduce an explanation), parentheses (a true aside), or restructure the sentence. Also catch spaced em dashes (` — `) and double hyphens (` -- `) used the same way.
+- **Rule:** R-02 forbids the em dash in any text. Replace each one, in rough order of preference: a period (start a new sentence), a comma (a tight aside), a colon (introduce an explanation), parentheses (a true aside), or restructure the sentence. Also catch spaced em dashes (`—`) and double hyphens (`--`) used the same way.
 - **Before:**
   > The policy — announced without warning — affects thousands of workers.
 - **After:**
@@ -243,7 +244,7 @@ allowed-tools: Read Write Edit Glob Grep
 - **After:**
   > You don't say "Netherlands, Europe" as an address, yet this mislabeling continues.
 - **False positive:** many editors and journalists use em dashes deliberately. On its own an em dash is not proof of AI. It counts when it sits in a cluster with other tells (R-02 still bans it in output, but do not rewrite the user's deliberate style without saying so).
-- **Voice override:** if the user provides a writing sample that uses em dashes at a certain frequency, match the sample's frequency instead of cutting them all (see Voice calibration).
+- **Voice sample:** if the user provides a writing sample that uses em dashes, that sample is a direction rather than agent copy. Surface it the way R-37 says (name the character, name the rule, ask), then match the sample's frequency only if the owner keeps it. Never keep or cut them silently.
 
 ### Boldface Overuse
 
@@ -318,7 +319,7 @@ A clean human writer can hit several patterns above without any AI involvement. 
 - **Perfect grammar and consistent style.** Many writers are professionals or have been edited. Polish does not equal AI.
 - **Mixed casual and formal registers.** This often signals a real person, not a chatbot.
 - **"Bland" or "robotic" prose.** AI prose has specific tells. Generic dryness without those tells is just dry writing.
-- **Formal vocabulary.** AI overuses *specific* words (see Empty AI Vocabulary), not all fancy words. Do not flatten a precise word just because it sounds brainy.
+- **Formal vocabulary.** AI overuses _specific_ words (see Empty AI Vocabulary), not all fancy words. Do not flatten a precise word just because it sounds brainy.
 - **Common transition words in isolation.** One "however" or "additionally" is not a tell. They count only when piled up.
 - **Curly quotes alone.** macOS, Word, and most CMSes auto-curl by default. Curly quotes count only when stacked with other tells.
 - **Em dashes alone.** Editors and journalists use them. An em dash is evidence only inside a cluster.
@@ -344,7 +345,7 @@ If the user provides a sample of their own writing, match it before rewriting:
 
 1. Read the sample first. Note its sentence lengths, vocabulary, paragraph openings, punctuation, and recurring phrases.
 2. Match those habits instead of merely deleting AI patterns. Do not upgrade casual words or regularize deliberate quirks.
-3. The sample outranks this skill's style rules. If the sample uses em dashes, keep them at roughly the sample's frequency (R-02 still applies to any copy the user did not authorize; when the user's own voice uses them, the voice wins).
+3. The sample outranks this skill's style rules, except where R-02 applies. R-02 governs copy the agent authors; a sample that uses em dashes is a direction, so it goes through R-37's conflict protocol, and you match its frequency only if the owner keeps it. R-02 applies in full to any copy the user did not authorize.
 
 Without a sample, use the defaults above. Matching the author beats scrubbing the tell.
 
@@ -362,7 +363,7 @@ Run these alongside the core Delivery Gate when the task is copy work. Every lin
 
 - [ ] No fabricated numbers, testimonials, names, dates, or claims; everything real or a labeled placeholder (R-17, R-18, R-36, R-38)
 - [ ] Buzzwords from R-16 and the Empty AI Vocabulary list replaced with specific, evidenced language
-- [ ] No em dashes in the output (R-02), unless the user's own sample voice uses them
+- [ ] No em dashes in the output (R-02); if the user's own sample voice uses them, they were surfaced under R-37 and the owner kept them
 - [ ] No excessive quotation marks: quotes only where they carry meaning (dialogue, real citations, titles), not as default emphasis (R-36)
 - [ ] No all-caps emphasis clauses: emphasis written into the sentence, not shouted with caps (R-36)
 - [ ] Every sentence names its actor: no actorless passive, no abstraction given a human verb, where a real subject was available (R-02, R-16)
